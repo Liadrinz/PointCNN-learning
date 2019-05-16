@@ -114,6 +114,7 @@ def distance_matrix(A):
     return D
 
 
+# N: batches, P: points, C: channels
 # A shape is (N, P, C)
 def batch_distance_matrix(A):
     r = tf.reduce_sum(A * A, axis=2, keep_dims=True)
@@ -149,6 +150,7 @@ def prepare_for_unique_top_k(D, A):
     D += tf.reduce_max(D)*tf.cast(indices_duplicated, tf.float32)
 
 
+# returns the nearest D points
 # return shape is (N, P, K, 2)
 def knn_indices(points, k, sort=True, unique=True):
     points_shape = tf.shape(points)
@@ -164,6 +166,7 @@ def knn_indices(points, k, sort=True, unique=True):
     return -distances, indices
 
 
+# returns the nearest k points
 # return shape is (N, P, K, 2)
 def knn_indices_general(queries, points, k, sort=True, unique=True):
     queries_shape = tf.shape(queries)

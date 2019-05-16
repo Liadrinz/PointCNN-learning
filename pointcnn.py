@@ -9,6 +9,11 @@ import tensorflow as tf
 
 def xconv(pts, fts, qrs, tag, N, K, D, P, C, C_pts_fts, is_training, with_X_transformation, depth_multiplier,
           sorting_method=None, with_global=False):
+
+    # debug
+    with open('debug.log', 'a') as f:
+        f.write('P: ' + str(P) + '\n')
+    
     _, indices_dilated = pf.knn_indices_general(qrs, pts, K * D, True)
     indices = indices_dilated[:, :, ::D, :]
 
@@ -21,9 +26,6 @@ def xconv(pts, fts, qrs, tag, N, K, D, P, C, C_pts_fts, is_training, with_X_tran
     nn_pts_local = tf.subtract(nn_pts, nn_pts_center, name=tag + 'nn_pts_local')  # (N, P, K, 3)
 
     # Prepare features to be transformed
-    # debug
-    print(nn_pts_local.get_shape(), C_pts_fts)
-    # debug end
     nn_fts_from_pts_0 = pf.dense(nn_pts_local, C_pts_fts, tag + 'nn_fts_from_pts_0', is_training)
     nn_fts_from_pts = pf.dense(nn_fts_from_pts_0, C_pts_fts, tag + 'nn_fts_from_pts', is_training)
     if fts is None:
