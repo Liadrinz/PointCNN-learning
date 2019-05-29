@@ -257,6 +257,8 @@ def main():
             label_train_placeholder: label_train,
         })
 
+        content = {'conv1': [], 'conv2': [], 'conv3': [], 'conv4': [], 'label': []}
+        t_1_acc = 0
         for batch_idx_train in range(batch_num):
             ######################################################################
             # Validation
@@ -318,7 +320,8 @@ def main():
                                                     scaling_range=scaling_range,
                                                     order=setting.rotation_order)
             sess.run(reset_metrics_op)
-            sess.run([train_op, loss_mean_update_op, t_1_acc_update_op, t_1_per_class_acc_update_op],
+            # add some tensors
+            _, _, _, _, conv1, conv2, conv3, conv4, batch_label = sess.run([train_op, loss_mean_update_op, t_1_acc_update_op, t_1_per_class_acc_update_op, *[net.layer_fts[i] for i in range(1, 5)], labels_2d],
                      feed_dict={
                          handle: handle_train,
                          indices: pf.get_indices(batch_size_train, sample_num_train, point_num, pool_setting_train),
@@ -327,6 +330,35 @@ def main():
                          jitter_range: np.array([jitter]),
                          is_training: True,
                      })
+            if t_1_acc >= 0.8:
+                ##### experiment #####
+                import json
+                from tsne_visualize import reduce_dim
+                conv1 = reduce_dim(conv1)
+                conv2 = reduce_dim(conv2)
+                conv3 = reduce_dim(conv3)
+                conv4 = reduce_dim(conv4)
+                content['conv1'].extend([[float(val) for val in row] for row in conv1])
+                content['conv2'].extend([[float(val) for val in row] for row in conv2])
+                content['conv3'].extend([[float(val) for val in row] for row in conv3])
+                content['conv4'].extend([[float(val) for val in row] for row in conv4])
+                content['label'].extend([int(val) for val in batch_label])
+                if len(content['conv1']) >= 9000:
+                    with open('trained_tsne9.json', 'w') as f:
+                        f.write(json.dumps(content))
+                    exit(0)
+                elif len(content['conv1']) >= 5000:
+                    with open('trained_tsne5.json', 'w') as f:
+                        f.write(json.dumps(content))
+                elif len(content['conv1']) >= 2000:
+                    with open('trained_tsne2.json', 'w') as f:
+                        f.write(json.dumps(content))
+                elif len(content['conv1']) >= 1000:
+                    with open('trained_tsne1.json', 'w') as f:
+                        f.write(json.dumps(content))
+                ##### experiment end #####
+
+
             if batch_idx_train % 10 == 0:
                 loss, t_1_acc, t_1_per_class_acc, summaries, step = sess.run([loss_mean_op,
                                                                         t_1_acc_op,

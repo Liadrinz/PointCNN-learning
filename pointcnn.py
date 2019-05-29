@@ -9,11 +9,6 @@ import tensorflow as tf
 
 def xconv(pts, fts, qrs, tag, N, K, D, P, C, C_pts_fts, is_training, with_X_transformation, depth_multiplier,
           sorting_method=None, with_global=False):
-
-    # debug
-    with open('debug.log', 'a') as f:
-        f.write('P: ' + str(P) + '\n')
-    
     _, indices_dilated = pf.knn_indices_general(qrs, pts, K * D, True)
     indices = indices_dilated[:, :, ::D, :]
 
