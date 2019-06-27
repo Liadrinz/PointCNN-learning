@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PointCNN VIS</title>
+    <meta charset="utf-8"/>
+</head>
+<body>
+    <div id="airplane"></div>
+    <div id="chair"></div>
+</body>
+<script>
+    let airplanes = document.querySelector('#airplane');
+    let chairs = document.querySelector('#chair');
+
+    function line(object) {
+        text = '';
+        for (let i = 1; i <= 4; i++) {
+            text += `<img width="350" src="./records/${object}_layer_${i}_in.png">`
+        }
+        text += '<br/>';
+        for (let i = 1; i <= 4; i++) {
+            text += `<img width="350" src="./records/${object}_layer_${i}_out.png">`
+        }
+        return text;
+    }
+
+    for (let idx = 1; idx <= 6; ++idx) {
+        let title = document.createElement('h2');
+        title.innerHTML = `airplane_${idx}`;
+        airplanes.appendChild(title);
+        let child = document.createElement('div');
+        child.innerHTML = line(`airplane_${idx}`);
+        airplanes.appendChild(child);
+    }
+
+    for (let idx = 1; idx <= 10; ++idx) {
+        let title = document.createElement('h2');
+        title.innerHTML = `chair_${idx}`;
+        chairs.appendChild(title);
+        let child = document.createElement('div');
+        child.innerHTML = line(`chair_${idx}`);
+        chairs.appendChild(child);
+    }
+</script>
+</html>

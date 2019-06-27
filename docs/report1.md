@@ -1,6 +1,6 @@
 ### Sampling
 
-#### ids
+#### IDS (Inverse Density Sampling)
 
 - Code
 
